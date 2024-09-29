@@ -12,7 +12,25 @@ const tokens = (n) => {
 }
 
 async function main() {
+  const [owner] = await ethers.getSigners()
 
+  const dapp = await hre.ethers.getContractFactory("DappStore")
+  const dappStore = await dapp.deploy()
+  await dappStore.deployed()
+
+  for(item of items){
+    const transaction = await dappStore.list(
+      item.id,
+      item.name,
+      item.category,
+      item.image,
+      tokens(item.price),
+      item.rating,
+      item.stock,
+    )
+    await transaction.wait()
+    console.log(`Listed:${item.id}:${item.name}`)
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
